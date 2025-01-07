@@ -1,0 +1,229 @@
+class TrafficRacerGame {
+    field int score, maxCars, activeCarsCount, carSpawnCounter;
+    field UserCar userCar;
+    field Array aiCars;    // List of all AI cars (AICar)
+    field Road road;
+
+    constructor TrafficRacerGame new() {
+        let score = 0;
+        let userCar = UserCar.new(272, 224);  // User car starts in lane 3
+        let road = Road.new(197, 261, 325);
+        let maxCars = 10;
+        let aiCars = Array.new(maxCars); // Initializes array for AI cars
+        let activeCarsCount = 0;
+        let carSpawnCounter = 0;
+        do Random.setSeed(22843);
+        return this;
+    }
+
+    method void dispose() {
+        do road.dispose();
+        do userCar.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Spawns a single AI car in a random lane. */
+    method void spawnAICar() {
+        var int lane, type;
+        var AICar car;
+
+        // Ensure we don't exceed the maxCars limit
+        if (activeCarsCount < maxCars) {
+            let lane = Random.randRange(3) + 1;  // Random lane between 1 and 4
+            if (lane < 3) {   // Lanes 1 and 2 get opposite direction cars
+                let car = AICar.new(2, lane);  // Opposite direction
+            } else {
+                let car = AICar.new(1, lane);  // Same direction
+            }
+
+            // Place the new car in the next available slot in the array
+            let aiCars[activeCarsCount] = car;
+            let activeCarsCount = activeCarsCount + 1;
+        }
+        return;
+    }
+
+    /** Removes an AI car and shifts the array. */
+    method void removeAICar(int index) {
+        var int i;
+
+        // Shift cars to fill the gap in the array
+        let i = index;
+        while (i < (activeCarsCount - 1)) {
+            let aiCars[i] = aiCars[i + 1];
+            let i = i + 1;
+        }
+
+        // Nullify the last slot (since it was moved up)
+        let aiCars[activeCarsCount - 1] = null;
+        let activeCarsCount = activeCarsCount - 1;
+        return;
+    }
+
+    /** Moves the AI cars and removes them if they go off-screen. */
+    method void moveAICars() {
+        var int i;
+        var AICar car;
+
+        let i = 0;
+        while (i < activeCarsCount) {
+            let car = aiCars[i];
+            if (~(car = null)) {
+                do car.move(userCar.getSpeed());  // Move each AI car
+                if (car.getY() > (256)) {  // Car is off-screen
+                    do removeAICar(i);  // Remove the car if it goes out of bounds
+                } else {
+                    let i = i + 1;  // Only increment if the car wasn't removed
+                }
+            }
+        }
+        return;
+    }
+
+    method boolean hasCrashed(UserCar userCar, AICar aiCar) {
+        var int userCarX, userCarY, aiCarX, aiCarY;
+        var int carWidth, carHeight;
+        let carWidth = 12;
+        let carHeight = 16;
+
+        let userCarX = userCar.getX();
+        let userCarY = userCar.getY();
+
+        let aiCarX = aiCar.getX();
+        let aiCarY = aiCar.getY();
+
+        if (userCarX < (aiCarX + carWidth)) {
+            if ((userCarX + carWidth) > aiCarX) {
+                if (userCarY < (aiCarY + carHeight)) {
+                    if ((userCarY + carHeight) > aiCarY) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    method int calculateScore() {
+        var int lane;
+        let lane = userCar.getLane();
+
+        if (lane = 3) {
+            let score = score + (1 * userCar.getSpeed()); // Same direction lanes
+        }
+        if (lane = 4) {
+            let score = score + (1 * userCar.getSpeed()); // Same direction lanes
+        }
+        if (lane = 1) {
+            let score = score + (3 * userCar.getSpeed()); // Opposite direction
+        }
+        if (lane = 2) {
+            let score = score + (2 * userCar.getSpeed()); // Opposite direction
+        }
+
+        // Update score
+        do Output.moveCursor(0, 0);
+        do Output.printInt(score);
+
+        return score;
+    }
+
+    method void run() {
+        var char key;
+        var boolean exit;
+        var int i;
+        let exit = false;
+        let carSpawnCounter = 0;
+        do userCar.show();
+
+        while (~exit) {
+            do road.show();
+
+            let key = Keyboard.keyPressed();
+            if (~(key = 0)) {
+                do userCar.handleInput(key);
+            }
+            do moveAICars();
+
+            // Spawn new cars
+            let carSpawnCounter = carSpawnCounter + 1;
+            if (carSpawnCounter > (50 / userCar.getSpeed())) {
+                do spawnAICar();
+                let carSpawnCounter = 0;
+            }
+            let i = 0;
+            while (i < activeCarsCount) {
+                if (hasCrashed(userCar, aiCars[i])) {
+                    let exit = true; // End game on collision
+                }
+                let i = i+1;
+            }
+
+            do calculateScore();
+            do Sys.wait(5);
+        }
+        do endscreen(score);
+        return;
+    }
+
+    method void endscreen(int score) {
+        var char key;
+        let key = 0;
+
+        // Move cursor to the top left
+        do Output.moveCursor(0, 0);
+
+        do Output.printString("Game Over");
+        do Output.println();
+        do Output.printString("Your score: ");
+        do Output.printInt(score);
+        do Output.println();
+        do Output.printString("Press 'R' to restart.");
+        while ((~(key = 114)) & (~(key = 82))) { // 'r'
+            let key = Keyboard.keyPressed();
+        }
+        do resetGame();
+        return;
+    }
+
+    method void resetGame() {
+        var int i;
+        var AICar car;
+        
+        // Clear AI cars from the screen
+        let i = 0;
+        while (i < activeCarsCount) {
+            if (~(aiCars[i] = null)) {
+                let car = aiCars[i];
+                do car.hide();
+            }
+            let i = i + 1;
+        }
+
+        // Reset active cars count and clear the array
+        let activeCarsCount = 0;
+        while (activeCarsCount < maxCars) {
+            let aiCars[activeCarsCount] = null;
+            let activeCarsCount = activeCarsCount + 1;
+        }
+        let activeCarsCount = 0;
+
+        do userCar.hide();
+
+        // Clear the screen
+        do Screen.setColor(false);
+        do Screen.drawRectangle(0, 0, 511, 255);
+        do Screen.setColor(true);
+
+        // Reset score and game variables
+        let score = 0;
+
+        // Reinitialize the user car
+        let userCar = UserCar.new(272, 224);  // Reset user car position
+
+        // Restart the game loop
+        do run();
+        return;
+    }
+}

@@ -1,0 +1,114 @@
+class AICar {
+    field int x, y, lane, type;
+
+    constructor AICar new(int carType, int laneArg) {
+        let type = carType;
+        let lane = laneArg;
+        if (type = 1) {
+            if (lane = 3) {
+                let x = 272;
+            } else {
+                let x = 304;
+            }
+        }
+        if (type = 2) {
+            if (lane = 1) {
+                let x = 208;
+            } if (lane = 2) {
+                let x = 240;
+            }
+        }
+
+        let y = 0;  // Start at the top
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method int getX() { return x; }
+    method int getY() { return y; }
+
+    method void move(int speed) {
+        // Move the car by adjusting the y coordinate based on its speed and type
+        do hide();  // Hide the car at its old position
+
+        if (type = 1) {
+            let y = y + speed;
+        }
+        else {
+            let y = y + (2 * speed);  // Opposite direction cars are approaching faster
+        }
+
+        do show();  // Show the car at its new position
+        return;
+    }
+
+    method void show() {
+        var int loc;
+        let loc = (x / 16) + (y * 32);
+        do Screen.setColor(true);
+        do drawAICar(loc);
+        return;
+    }
+
+    method void hide() {
+        var int loc;
+        let loc = (x / 16) + (y * 32);
+        do Screen.setColor(true);
+        do clearAICar(loc);
+        return;
+    }
+
+    method void drawAICar(int location) {
+        var int memAddress;
+        let memAddress = 16384 + location;
+        // Ensure the memory address is within the screen's bounds
+        if (memAddress > 16383 & (memAddress + 544) < 24576) {
+            do Memory.poke(memAddress + 0, 4080);
+            do Memory.poke(memAddress + 32, 7128);
+            do Memory.poke(memAddress + 64, 16380);
+            do Memory.poke(memAddress + 96, 14364);
+            do Memory.poke(memAddress + 128, 10260);
+            do Memory.poke(memAddress + 160, 12276);
+            do Memory.poke(memAddress + 192, 12276);
+            do Memory.poke(memAddress + 224, 12276);
+            do Memory.poke(memAddress + 256, 12276);
+            do Memory.poke(memAddress + 288, 12276);
+            do Memory.poke(memAddress + 320, 12276);
+            do Memory.poke(memAddress + 352, 10260);
+            do Memory.poke(memAddress + 384, 14364);
+            do Memory.poke(memAddress + 416, 16380);
+            do Memory.poke(memAddress + 448, 7128);
+            do Memory.poke(memAddress + 480, 4080);
+        }
+        return;
+    }
+    
+    method void clearAICar(int location) {
+        var int memAddress;
+        let memAddress = 16384 + location;
+        // Write white values to the memory (all 0s or appropriate white pixel values)
+        if (memAddress > 16383 & (memAddress + 544) < 24576) {
+            do Memory.poke(memAddress + 0, 0);
+            do Memory.poke(memAddress + 32, 0);
+            do Memory.poke(memAddress + 64, 0);
+            do Memory.poke(memAddress + 96, 0);
+            do Memory.poke(memAddress + 128, 0);
+            do Memory.poke(memAddress + 160, 0);
+            do Memory.poke(memAddress + 192, 0);
+            do Memory.poke(memAddress + 224, 0);
+            do Memory.poke(memAddress + 256, 0);
+            do Memory.poke(memAddress + 288, 0);
+            do Memory.poke(memAddress + 320, 0);
+            do Memory.poke(memAddress + 352, 0);
+            do Memory.poke(memAddress + 384, 0);
+            do Memory.poke(memAddress + 416, 0);
+            do Memory.poke(memAddress + 448, 0);
+            do Memory.poke(memAddress + 480, 0);     
+        }
+        return;
+    }
+}

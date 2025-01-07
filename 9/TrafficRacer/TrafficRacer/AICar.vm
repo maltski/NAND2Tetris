@@ -1,0 +1,383 @@
+function AICar.new 0
+push constant 4
+call Memory.alloc 1
+pop pointer 0
+push argument 0
+pop this 3
+push argument 1
+pop this 2
+push this 3
+push constant 1
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push this 2
+push constant 3
+eq
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push constant 272
+pop this 0
+goto IF_END1
+label IF_FALSE1
+push constant 304
+pop this 0
+label IF_END1
+label IF_FALSE0
+push this 3
+push constant 2
+eq
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push this 2
+push constant 1
+eq
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push constant 208
+pop this 0
+label IF_FALSE3
+push this 2
+push constant 2
+eq
+if-goto IF_TRUE4
+goto IF_FALSE4
+label IF_TRUE4
+push constant 240
+pop this 0
+label IF_FALSE4
+label IF_FALSE2
+push constant 0
+pop this 1
+push pointer 0
+return
+function AICar.dispose 0
+push argument 0
+pop pointer 0
+push pointer 0
+call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return
+function AICar.getX 0
+push argument 0
+pop pointer 0
+push this 0
+return
+function AICar.getY 0
+push argument 0
+pop pointer 0
+push this 1
+return
+function AICar.move 0
+push argument 0
+pop pointer 0
+push pointer 0
+call AICar.hide 1
+pop temp 0
+push this 3
+push constant 1
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push this 1
+push argument 1
+add
+pop this 1
+goto IF_END0
+label IF_FALSE0
+push this 1
+push constant 2
+push argument 1
+call Math.multiply 2
+add
+pop this 1
+label IF_END0
+push pointer 0
+call AICar.show 1
+pop temp 0
+push constant 0
+return
+function AICar.show 1
+push argument 0
+pop pointer 0
+push this 0
+push constant 16
+call Math.divide 2
+push this 1
+push constant 32
+call Math.multiply 2
+add
+pop local 0
+push constant 0
+not
+call Screen.setColor 1
+pop temp 0
+push pointer 0
+push local 0
+call AICar.drawAICar 2
+pop temp 0
+push constant 0
+return
+function AICar.hide 1
+push argument 0
+pop pointer 0
+push this 0
+push constant 16
+call Math.divide 2
+push this 1
+push constant 32
+call Math.multiply 2
+add
+pop local 0
+push constant 0
+not
+call Screen.setColor 1
+pop temp 0
+push pointer 0
+push local 0
+call AICar.clearAICar 2
+pop temp 0
+push constant 0
+return
+function AICar.drawAICar 1
+push argument 0
+pop pointer 0
+push constant 16384
+push argument 1
+add
+pop local 0
+push local 0
+push constant 16383
+gt
+push local 0
+push constant 544
+add
+and
+push constant 24576
+lt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+push constant 0
+add
+push constant 4080
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 32
+add
+push constant 7128
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 64
+add
+push constant 16380
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 96
+add
+push constant 14364
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 128
+add
+push constant 10260
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 160
+add
+push constant 12276
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 192
+add
+push constant 12276
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 224
+add
+push constant 12276
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 256
+add
+push constant 12276
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 288
+add
+push constant 12276
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 320
+add
+push constant 12276
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 352
+add
+push constant 10260
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 384
+add
+push constant 14364
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 416
+add
+push constant 16380
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 448
+add
+push constant 7128
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 480
+add
+push constant 4080
+call Memory.poke 2
+pop temp 0
+label IF_FALSE0
+push constant 0
+return
+function AICar.clearAICar 1
+push argument 0
+pop pointer 0
+push constant 16384
+push argument 1
+add
+pop local 0
+push local 0
+push constant 16383
+gt
+push local 0
+push constant 544
+add
+and
+push constant 24576
+lt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+push constant 0
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 32
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 64
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 96
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 128
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 160
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 192
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 224
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 256
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 288
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 320
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 352
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 384
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 416
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 448
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 480
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+label IF_FALSE0
+push constant 0
+return

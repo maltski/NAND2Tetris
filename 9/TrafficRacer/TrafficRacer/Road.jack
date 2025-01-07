@@ -1,0 +1,56 @@
+class Road {
+    field int leftx, rightx, middlex, leftdashedx, rightdashedx;
+
+    constructor Road new(int leftlinex, int middlelinex, int rightlinex) {
+        let leftx = leftlinex;
+        let middlex = middlelinex;
+        let rightx = rightlinex;
+        let leftdashedx = (middlelinex + leftlinex) / 2;
+        let rightdashedx = (rightlinex + middlelinex) / 2;
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void drawLine(int x, int y) {
+	    do Screen.drawRectangle(x, y, x + 1, y + 255);
+	    return;
+    }
+
+    method void drawLines() {
+        var int i;
+	    do drawLine(leftx, 0);
+        let i = 0;
+        while (i < 256) {  // Continue while within screen height
+            do drawDashedLine(leftdashedx, i);
+            let i = i + 64;  // Move down 64 pixels to leave gaps
+        } 
+        do drawLine(middlex, 0);
+        let i = 0;
+        while (i < 256) {  // Continue while within screen height
+            do drawDashedLine(rightdashedx, i);
+            let i = i + 64;  // Move down 64 pixels to leave gaps
+        }
+        do drawLine(rightx, 0);
+	    return;
+    }
+
+    method void drawDashedLine(int x, int y) {
+        var int j;
+        let j = y;
+        while (j < 256) {  // Draw until the line reaches the bottom of the screen
+            do Screen.drawRectangle(x, j, x + 1, j + 3);  // 4-pixel tall dash
+            let j = j + 8;
+        }
+        return;
+    }
+
+    method void show() {
+        do Screen.setColor(true);
+        do drawLines();
+        return;
+    }
+}
